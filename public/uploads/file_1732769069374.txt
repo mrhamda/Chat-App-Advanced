@@ -1,0 +1,1 @@
+wiggle(effect("Wiggle - position")("Wiggle Speed (wigs/sec)"), effect("Wiggle - position")("Wiggle Amount (pixels)"))
