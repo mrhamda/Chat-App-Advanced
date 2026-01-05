@@ -37,5 +37,4 @@ The app uses firebase authenitcation. It allows for the user to appload their av
 - Buffer (saving files has same functionalty as multer)
 - Webtrc
 
-# Advanced chatapp
 
