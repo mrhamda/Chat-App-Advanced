@@ -12,7 +12,6 @@ const firebaseConfig = {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 const auth = getAuth(app)
@@ -36,7 +35,7 @@ export function getData(customName, callback) {
 
     onValue(reference, (snapshot) => {
         const data = snapshot.val();
-        callback(data); // Return the data via the callback
+        callback(data); 
     }, (error) => {
         console.error("Error fetching data: ", error);
     });
@@ -49,9 +48,9 @@ export function getDataPromise(customName) {
 
         onValue(reference, (snapshot) => {
             const data = snapshot.val();
-            resolve(data); // Resolve the promise with the fetched data
+            resolve(data); 
         }, (error) => {
-            reject(error); // Reject the promise if there's an error
+            reject(error); 
         });
     });
 }
