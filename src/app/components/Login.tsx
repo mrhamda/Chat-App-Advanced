@@ -33,7 +33,6 @@ export function Login() {
           Welcome Back!
         </h1>
         {error && <p className="text-red-500">{"Check email adress and the password"}</p>}{" "}
-        {/* Display error messages */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
