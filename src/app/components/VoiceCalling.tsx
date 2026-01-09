@@ -119,7 +119,6 @@ export function VoiceCalling({
 
   return (
     <div className="z-50 fixed inset-0 bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-600 flex flex-col justify-center items-center animate-fadeIn">
-      {/* Mini UI */}
       {miniScreenActive &&
         dataForCallingMe !== null &&
         dataForCallingMe !== undefined && (
@@ -199,7 +198,6 @@ export function VoiceCalling({
           </div>
         )}
 
-      {/* Main UI */}
       {status === "called" && (
         <>
           <div className="text-center mb-8">
