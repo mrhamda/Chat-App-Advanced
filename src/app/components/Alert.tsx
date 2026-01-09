@@ -9,7 +9,6 @@ type AlertProps = {
 export function Alert({ text, color }: AlertProps) {
   const { alert, setAlert } = useProjectContext();
 
-  // Predefined Tailwind classes for color
   const colorClass = color === "red"
     ? "text-red-800 bg-red-50 dark:text-red-400 dark:bg-gray-800"
     : color === "green"
