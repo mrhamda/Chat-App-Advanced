@@ -9,14 +9,13 @@ export function Signup() {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [userName, setUserName] = useState<string>();
-  const [error, setError] = useState<string>(""); // Store errors
+  const [error, setError] = useState<string>(""); 
   const [imageUrl, setImageUrl] = useState<string>();
   const router = useRouter();
 
   const [createUserWithEmailAndPassword, user, loading, authError] =
     useCreateUserWithEmailAndPassword(auth);
 
-  // Handle the file selection
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files![0];
 
@@ -24,7 +23,6 @@ export function Signup() {
       const formData = new FormData();
       formData.append("file", file);
 
-      // Send the file to the server
       try {
         const res = await fetch("/api/upload", {
           method: "POST",
@@ -68,7 +66,6 @@ export function Signup() {
         });
         localStorage.setItem("user", "true");
 
-        // Redirect to login page
         router.push("/login");
       }else {
         setError(
@@ -124,7 +121,7 @@ export function Signup() {
             type="file"
             id="fileInput"
             accept="image/*"
-            style={{ display: "none" }} // Hide the file input
+            style={{ display: "none" }} 
             onChange={handleFileChange}
           />
         </div>
