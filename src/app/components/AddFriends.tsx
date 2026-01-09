@@ -31,10 +31,9 @@ export function AddFriends({ userID }: AddFriendsType) {
       (snapshot) => {
         const usersData = snapshot.val();
 
-        // Create an array from the users data, excluding the current user
         const usersArray = Object.keys(usersData)
-          .filter((key) => key !== userID) // Exclude the current user
-          .map((key) => usersData[key]); // Map to user data
+          .filter((key) => key !== userID) 
+          .map((key) => usersData[key]); 
 
         setAllData(usersArray);
         setVisibleData(usersArray);
