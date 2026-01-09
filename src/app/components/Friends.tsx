@@ -91,9 +91,8 @@ export function Friends({ userID }: FriendsType) {
 
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
 
-  // Toggle the dropdown menu for a specific friend
   const toggleMenu = (customID: string, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent the click event from bubbling up
+    event.stopPropagation(); 
 
     setMenuOpen((prev) => (prev === customID ? null : customID));
   };
@@ -101,7 +100,6 @@ export function Friends({ userID }: FriendsType) {
   useEffect(() => {
     const getAllFriendSquares = document.querySelectorAll(".friendSquare");
     getAllFriendSquares.forEach((item) => {
-      // Ensure `item` is treated as an HTMLElement
       const element = item as HTMLElement;
 
       element.classList.remove("bg-gray-100");
@@ -200,7 +198,6 @@ export function Friends({ userID }: FriendsType) {
     };
   };
 
-  // Debounced `setData` to avoid rapid updates
   const debouncedSetData = debounce((roomPath: string, data: any) => {
     const db = getDatabase();
     set(ref(db, roomPath), data);
@@ -219,14 +216,12 @@ export function Friends({ userID }: FriendsType) {
       (snapshot) => {
         const data = snapshot.val();
         if (snapshot.exists() && data?.messages) {
-          // Avoid redundant state updates
           setMessages((prevMessages) =>
             JSON.stringify(prevMessages) !== JSON.stringify(data.messages)
               ? data.messages
               : prevMessages
           );
         } else {
-          // Create new room data if no room exists
           console.log("Creating new data as no room exists.");
           debouncedSetData(roomKey, { messages });
         }
@@ -335,9 +330,9 @@ export function Friends({ userID }: FriendsType) {
   }, [sortValue]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; // Access the selected file
+    const file = e.target.files?.[0]; 
     if (file) {
-      const fileSizeMB = file.size / (1024 * 1024); // Convert size to MB
+      const fileSizeMB = file.size / (1024 * 1024); 
       if (fileSizeMB > maxFileSizeMB) {
         alert(
           `File size exceeds ${maxFileSizeMB}MB limit. Please select a smaller file.`
@@ -346,7 +341,6 @@ export function Friends({ userID }: FriendsType) {
         const formData = new FormData();
         formData.append("file", file);
 
-        // Send the file to the server
         try {
           const res = await fetch("/api/upload", {
             method: "POST",
@@ -382,10 +376,10 @@ export function Friends({ userID }: FriendsType) {
       const mediaRecorder = new MediaRecorder(stream);
 
       mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = []; // Reset audio chunks
+      audioChunksRef.current = []; 
 
       mediaRecorder.ondataavailable = (event: BlobEvent) => {
-        audioChunksRef.current.push(event.data); // Collect chunks
+        audioChunksRef.current.push(event.data); 
       };
 
       mediaRecorder.start();
@@ -406,8 +400,8 @@ export function Friends({ userID }: FriendsType) {
         });
         const audioURL = URL.createObjectURL(audioBlob);
 
-        setAudioURL(audioURL); // Set audio URL for playback
-        sendAudioMessage(audioBlob); // Send the audio message
+        setAudioURL(audioURL); 
+        sendAudioMessage(audioBlob);
         setRecording(false);
         console.log("Recording stopped.");
       };
@@ -417,12 +411,10 @@ export function Friends({ userID }: FriendsType) {
   const sendAudioMessage = async (audioBlob: Blob): Promise<void> => {
     console.log("Sending audio message...", audioBlob);
 
-    // Create a new File with the desired extension (MP3)
     const audioFile = new File([audioBlob], "audio_message.mp3", {
       type: "audio/mp3",
     });
 
-    // Simulate sending the audio to a server
     const formData = new FormData();
     formData.append("file", audioFile);
 
@@ -468,7 +460,6 @@ export function Friends({ userID }: FriendsType) {
 
           let messages: MessageType[] = [];
 
-          // Listen for messages in the room
           const roomCallback = (snapshot: any) => {
             const value = snapshot.val();
             if (value && value.messages) {
@@ -480,7 +471,6 @@ export function Friends({ userID }: FriendsType) {
           });
           activeListeners.push({ ref: roomReference, callback: roomCallback });
 
-          // Listen for the last message of the current user
           const disCallback = (snapshot: any) => {
             const thisFriendData: MessageType = snapshot.val();
 
@@ -530,9 +520,7 @@ export function Friends({ userID }: FriendsType) {
   let peer: Peer | null = null;
   let peerList: any[] = [];
 
-  // Initialize the peer for a specific user
 
-  // Toggle mute/unmute
   function toggleMute(b: boolean) {
     if (!myStream) {
       console.warn("No active stream to mute/unmute.");
@@ -548,10 +536,8 @@ export function Friends({ userID }: FriendsType) {
     }
   }
 
-  // Make a call to another user
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
 
-  // Initialize the peer for a specific user
   function init(userId: string) {
     if (peer) {
       console.warn("A peer is already connected. Disconnect first.");
@@ -581,12 +567,12 @@ export function Friends({ userID }: FriendsType) {
 
     peer.on("call", (call) => {
       navigator.mediaDevices
-        .getUserMedia({ video: false, audio: true }) // Ensure audio is requested
+        .getUserMedia({ video: false, audio: true }) 
         .then((stream) => {
-          setMyStream(stream); // Set stream to state
-          console.log("myStream set in listenToCall:", stream); // Log when myStream is set
+          setMyStream(stream); 
+          console.log("myStream set in listenToCall:", stream); 
 
-          call.answer(stream); // Answer the call with the audio stream
+          call.answer(stream);
           call.on("stream", (remoteStream) => {
             if (!peerList.includes(call.peer)) {
               addRemoteAudio(remoteStream);
@@ -609,17 +595,16 @@ export function Friends({ userID }: FriendsType) {
 
     console.log("Attempting to connect to peer:", receiverId);
 
-    // Request both audio and video
     navigator.mediaDevices
-      .getUserMedia({ video: false, audio: true }) // Ensure audio is always included
+      .getUserMedia({ video: false, audio: true }) 
       .then((stream) => {
-        setMyStream(stream); // Set stream to state
-        console.log("myStream set in makeCall:", stream); // Log when myStream is set
+        setMyStream(stream);
+        console.log("myStream set in makeCall:", stream); 
         console.log("Stream initialized:", stream);
 
-        addLocalAudio(stream); // Add your local audio to the local div
+        addLocalAudio(stream);
 
-        const call = peer!.call(receiverId, stream); // Call the receiver
+        const call = peer!.call(receiverId, stream); 
 
         call.on("stream", (remoteStream) => {
           if (!peerList.includes(call.peer)) {
@@ -637,7 +622,6 @@ export function Friends({ userID }: FriendsType) {
       });
   }
 
-  // Add remote audio stream
   function addRemoteAudio(stream: MediaStream) {
     const audio = document.createElement("audio");
     audio.srcObject = stream;
@@ -652,12 +636,11 @@ export function Friends({ userID }: FriendsType) {
     }
   }
 
-  // Add local audio stream
   function addLocalAudio(stream: MediaStream) {
     const audio = document.createElement("audio");
     audio.srcObject = stream;
     audio.controls = true;
-    audio.muted = true; // Mute local audio to prevent feedback
+    audio.muted = true; 
     audio.autoplay = true;
 
     const localDiv = document.getElementById("localVideo");
@@ -667,18 +650,15 @@ export function Friends({ userID }: FriendsType) {
       console.warn("Local video element not found.");
     }
   }
-  // Disconnect everything
   async function disconnect() {
     console.log("Disconnecting...");
 
-    // Stop monitoring intervals
     if (monitoringIntervalIdNewOrNot !== null) {
       clearInterval(monitoringIntervalIdNewOrNot);
       monitoringIntervalIdNewOrNot = null;
       console.log("Monitoring interval cleared.");
     }
 
-    // Remove Firebase listeners
     const db = getDatabase();
     activeListeners.forEach(({ ref, callback }) => {
       off(ref, "value", callback);
@@ -697,35 +677,29 @@ export function Friends({ userID }: FriendsType) {
       off(disReference);
     });
 
-    // Stop local media stream
     if (myStream) {
       myStream.getTracks().forEach((track) => track.stop());
       setMyStream(null);
       console.log("Local media stream stopped.");
     }
 
-    // Disconnect PeerJS
     if (peer) {
-      // Close all active connections
       Object.values(peer.connections).forEach((connections) => {
         connections.forEach((connection: any) => {
           if (connection.close) connection.close();
         });
       });
 
-      // Remove peer event listeners
       peer.removeAllListeners();
 
-      peer.disconnect(); // Disconnect from the signaling server
-      peer.destroy(); // Destroy the peer instance
+      peer.disconnect();
+      peer.destroy(); 
       peer = null;
       console.log("PeerJS instance destroyed.");
     }
 
-    // Clear the peer list
     peerList = [];
 
-    // Clear remote and local audio elements
     const remoteDiv = document.getElementById("remoteVideo");
     if (remoteDiv) remoteDiv.innerHTML = "";
     const localDiv = document.getElementById("localVideo");
@@ -734,7 +708,6 @@ export function Friends({ userID }: FriendsType) {
     console.log("Disconnected successfully.");
   }
 
-  // Check microphone permissions
   navigator.permissions
     .query({ name: "microphone" as PermissionName })
     .then((result) => {
@@ -745,13 +718,11 @@ export function Friends({ userID }: FriendsType) {
       }
     });
 
-  // Toggle speakerphone mode
   function toggleSpeakerphone() {
     const audioElement = document.querySelector("audio");
     if (audioElement && myStream) {
       const audioTracks = myStream.getAudioTracks();
       if (audioTracks.length > 0) {
-        // Toggle speakerphone without relying on external state
         audioElement
           .setSinkId(audioElement.sinkId === "default" ? "speaker" : "default")
           .then(() => {
@@ -764,7 +735,6 @@ export function Friends({ userID }: FriendsType) {
     }
   }
 
-  // Handle call button press
   async function makeCallBtnPressed() {
     if (!userData?.custom_ID || !currentFriend) {
       console.error("User data or current friend is missing.");
@@ -779,7 +749,6 @@ export function Friends({ userID }: FriendsType) {
       console.error("Friend not found.");
       return;
     }
-    // Disconnect all when one is disconnected. ALSO remove calling info when one is disconnected
     const db = getDatabase();
     const roomKey = `voice/${friendUser.custom_ID}`;
     const roomKey2 = `voice/${userData.custom_ID}`;
@@ -809,7 +778,6 @@ export function Friends({ userID }: FriendsType) {
 
       // WE NEED TO CHECK IF HE IS TAKEN IN DEPTH LIKE EVEN CHECK IF PEOPLE ARE CALLING HIM OR HE IS CALLING PEOPLE AND EVEN IF HE ISNT TAKEN! SOME TTHING LIKE DATTT
       if (userExists) {
-        // Answer the call
 
         const pathForInACallForTheOther = `InACall/${currentFriend}`;
 
@@ -825,7 +793,6 @@ export function Friends({ userID }: FriendsType) {
 
           console.log("CONNECTED", userData.custom_ID);
 
-          // Remove the call data from the database
           await remove(ref(db, roomKey2));
           await remove(ref(db, roomKey));
           setVoiceCallingsState("connected");
@@ -863,7 +830,6 @@ export function Friends({ userID }: FriendsType) {
         }
 
         setVoiceCallingsState("calling");
-        // Start monitoring for answer
 
         monitorAnswerStatus(friendUser.custom_ID);
         return;
@@ -907,7 +873,7 @@ export function Friends({ userID }: FriendsType) {
       } catch (error) {
         console.error("Error checking answer status: ", error);
       }
-    }, 1000); // Check every second
+    }, 1000);
   }
 
   function monitoringCallEnd(userId: string) {
@@ -962,16 +928,13 @@ export function Friends({ userID }: FriendsType) {
           const roomKeyFriend = `voice/${friend.custom_ID}`;
           const roomKeyFriendAnswer = `voice/answers/${userData!.custom_ID}`;
 
-          // Fetch the data from the database
           const data = await getDataPromise(roomKeyFriend);
 
           if (data && Array.isArray(data)) {
-            // Filter out the current user's ID
             const filteredData = data.filter(
               (user: DataType) => user.custom_ID !== userData?.custom_ID
             );
 
-            // Update the room with the filtered data
             await set(ref(db, roomKeyFriend), filteredData);
 
             const pathForInACall = `InACall/${userData?.custom_ID}`;
@@ -996,14 +959,12 @@ export function Friends({ userID }: FriendsType) {
       e.preventDefault();
       e.returnValue = "";
 
-      // Perform cleanup
       removeRoomKey().catch((err) => console.error("Cleanup failed:", err));
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      // Cleanup the event listener
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [friendList, userData]);
@@ -1128,7 +1089,7 @@ export function Friends({ userID }: FriendsType) {
       } catch (e) {
         console.error(e);
       }
-    }, 2500); // Add an interval time in milliseconds
+    }, 2500); 
   }
 
   checkForIncomingCalls();
@@ -1216,7 +1177,6 @@ export function Friends({ userID }: FriendsType) {
       <div className="bg-white border border-gray-200 rounded flex flex-col sm:flex-row h-full">
         {/* Left Panel */}
         <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 h-full flex flex-col left-panel">
-          {/* Navigation Section */}
           <div className="flex flex-col text-sm border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
@@ -1238,7 +1198,6 @@ export function Friends({ userID }: FriendsType) {
             </div>
           </div>
 
-          {/* Chats List */}
           <div className="flex-1 overflow-y-auto sm:h-[calc(100vh-2.5cm)] sm:overflow-y-auto friendsListContainer">
             <ul className="py-1 space-y-2">
               {filtredValue !== null &&
@@ -1256,7 +1215,6 @@ export function Friends({ userID }: FriendsType) {
                       />
                       <div className="transform translate-y-0.5 text-left flex items-center space-x-2 flex-grow">
                         <h3 className="leading-4 m-0">{friend!.userName}</h3>{" "}
-                        {/* Removed any background */}
                         {newMessages(friend.custom_ID) === "!" && (
                           <div className="w-5 h-5 flex items-center justify-center bg-blue-500 text-white rounded-full text-xs">
                             {newMessages(friend.custom_ID)}
@@ -1264,7 +1222,6 @@ export function Friends({ userID }: FriendsType) {
                         )}
                       </div>
 
-                      {/* Toggleable menu trigger */}
                       <div className="relative">
                         <button
                           className="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none"
@@ -1278,7 +1235,6 @@ export function Friends({ userID }: FriendsType) {
                           />
                         </button>
 
-                        {/* Dropdown menu */}
                         {menuOpen === friend.custom_ID && (
                           <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                             <ul className="py-2 text-sm text-gray-700">
@@ -1319,9 +1275,7 @@ export function Friends({ userID }: FriendsType) {
           </div>
         </div>
 
-        {/* Right Panel */}
         <div className="mobileFriend sm:w-1/2 md:w-2/3 lg:w-3/4 border-l border-gray-200 sm:flex flex-col justify-between h-full right-panel">
-          {/* Top NavbarChat */}
           {currentFriend !== "" && (
             <div className=" w-full p-4 border-b border-gray-200 dark:border-neutral-700 fixed  sm:relative sm:p-4 sm:border-b-0 sm:h-auto sm:flex-row  sm:bg-transparent bg-white sm:shadow-none shadow-lg z-10 mt-5 mb-5">
               <NavbarChat
@@ -1338,7 +1292,6 @@ export function Friends({ userID }: FriendsType) {
             </div>
           )}
 
-          {/* Chat Component - Scrollable */}
           <div ref={msgRef} className="flex-1 overflow-y-auto p-4 pt-[4rem] ">
             {currentFriend === "" ? (
               <div className="flex justify-center items-center h-full text-center text-gray-700">
@@ -1356,10 +1309,8 @@ export function Friends({ userID }: FriendsType) {
             )}
           </div>
 
-          {/* Bottom Input Section */}
           {currentFriend !== "" && (
             <div className="flex items-center w-full p-4 border-t border-gray-200 dark:border-neutral-700 fixed bottom-0 sm:relative sm:p-4 sm:border-t-0 sm:h-auto sm:flex-row sm:justify-between sm:bg-transparent bg-white sm:shadow-none shadow-lg">
-              {/* Message Input */}
               <input
                 type="text"
                 value={message}
@@ -1373,7 +1324,6 @@ export function Friends({ userID }: FriendsType) {
                 }}
               />
 
-              {/* File Attachment Button */}
               <div className="relative inline-flex items-center">
                 <label className="p-2 bg-gray-200 text-gray-600 dark:bg-neutral-700 dark:text-gray-300 rounded-l-none hover:bg-gray-300 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer flex items-center justify-center h-10 w-10">
                   <FontAwesomeIcon icon={faPaperclip} />
@@ -1384,7 +1334,6 @@ export function Friends({ userID }: FriendsType) {
                   />
                 </label>
 
-                {/* Send Button */}
                 <button
                   onClick={() => {
                     handleSendMessage();
