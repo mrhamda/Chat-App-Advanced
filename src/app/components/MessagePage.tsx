@@ -110,7 +110,6 @@ const Message: React.FC<{
 
   async function handleDelete(messageID: string, txt: string): Promise<void> {
     try {
-      // Call the API to delete the file
       const response = await fetch("/api/deleteFile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -123,7 +122,6 @@ const Message: React.FC<{
         return;
       }
 
-      // Update the messages state
       setMessages((prevMessages) =>
         prevMessages.map((message) =>
           message.messageID === messageID
